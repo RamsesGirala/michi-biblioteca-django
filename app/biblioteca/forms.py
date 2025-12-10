@@ -74,7 +74,6 @@ class CategoriaLibroForm(forms.ModelForm):
         model = CategoriaLibro
         fields = ["nombre", "activo"]
 
-
 class LibroForm(forms.ModelForm):
     class Meta:
         model = Libro

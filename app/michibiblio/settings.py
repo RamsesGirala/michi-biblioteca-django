@@ -7,8 +7,10 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "dev-insegura")
 DEBUG = os.environ.get("DEBUG", "1") == "1"
 
 ALLOWED_HOSTS = ["*"]
+CORS_ALLOW_ALL_ORIGINS = True
 
 INSTALLED_APPS = [
+    # DJANGO CORE
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -16,11 +18,19 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
-    # nuestra app de negocio
+    # APP DE NEGOCIO
     "biblioteca.apps.BibliotecaConfig",
+
+    # REST
+    "rest_framework",
+    "corsheaders",
+
+    # API DOCS
+    "drf_spectacular",
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -58,6 +68,25 @@ DATABASES = {
 
 STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.SessionAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 10,
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "API Biblioteca Michi",
+    "DESCRIPTION": "API REST de la biblioteca (Proyecto 1 / Parte 2).",
+    "VERSION": "1.0.0",
+}
 
 LOGGING = {
     "version": 1,
