@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}Michi Biblioteca{% endblock %}</title>
+</head>
+<body>
+<header>
+  <nav>
+    <ul>
+      {% if user.is_authenticated %}
+        <li><a href="{% url 'biblioteca:home' %}">Inicio</a></li>
+        <li><a href="{% url 'biblioteca:prestamo_list' %}">Préstamos</a></li>
+        <li><a href="{% url 'biblioteca:libro_list' %}">Libros</a></li>
+
+        {# Solo supervisores ven Categorías y Reportes #}
+        {% if es_supervisor %}
+          <li><a href="{% url 'biblioteca:categoria_list' %}">Categorías</a></li>
+          <li><a href="{% url 'biblioteca:reporte_prestamos' %}">Reportes</a></li>
+        {% endif %}
+        <li>
+          <div style="margin-top: 0.5rem; font-size: 0.9rem;">
+            Usuario: <strong>{{ request.user.username }}</strong>
+            —
+            Rol:
+            {% if es_supervisor %}
+              <strong>Supervisor</strong>
+            {% elif es_operador %}
+              <strong>Operador</strong>
+            {% else %}
+              <strong>Sin rol asignado</strong>
+            {% endif %}
+          </div>
+        </li>
+        <li><a href="{% url 'logout' %}">Salir</a></li>
+      {% else %}
+        <li><a href="{% url 'login' %}">Login</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+</header>
+
+<main>
+  {% if messages %}
+    <div>
+      {% for message in messages %}
+        <p>
+          [{{ message.tags|default:"info" }}] {{ message }}
+        </p>
+      {% endfor %}
+    </div>
+  {% endif %}
+  
+  {% block content %}{% endblock %}
+</main>
+</body>
+</html>

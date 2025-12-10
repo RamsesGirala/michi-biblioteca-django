@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Categorías - Michi Biblioteca{% endblock %}
+
+{% block content %}
+  <h1>Categorías</h1>
+
+  <form method="get" style="margin-bottom: 1rem;">
+    <label for="id_page_size">Por página:</label>
+    <input
+      type="number"
+      id="id_page_size"
+      name="page_size"
+      min="1"
+      max="100"
+      value="{{ page_size|default:20 }}"
+    >
+    <button type="submit">Aplicar</button>
+  </form>
+
+  <p>
+    <a href="{% url 'biblioteca:categoria_create' %}">Nueva categoría</a>
+  </p>
+
+  <table border="1" cellpadding="4" cellspacing="0">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Activa</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for c in page_obj.object_list %}
+        <tr>
+          <td>{{ c.id }}</td>
+          <td>{{ c.nombre }}</td>
+          <td>{{ c.activo|yesno:"Sí,No" }}</td>
+          <td>
+            <a href="{% url 'biblioteca:categoria_edit' c.id %}">Editar</a> |
+            <a href="{% url 'biblioteca:categoria_delete' c.id %}">Eliminar</a>
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="4">No hay categorías cargadas.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div style="margin-top: 0.5rem;">
+    {% if page_obj.has_previous %}
+      <a href="?page_size={{ page_size }}&page=1">Primera</a>
+      <a href="?page_size={{ page_size }}&page={{ page_obj.previous_page_number }}">Anterior</a>
+    {% endif %}
+
+    <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+
+    {% if page_obj.has_next %}
+      <a href="?page_size={{ page_size }}&page={{ page_obj.next_page_number }}">Siguiente</a>
+      <a href="?page_size={{ page_size }}&page={{ page_obj.paginator.num_pages }}">Última</a>
+    {% endif %}
+  </div>
+{% endblock %}

@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Préstamos - Michi Biblioteca{% endblock %}
+
+{% block content %}
+  <h1>Préstamos</h1>
+
+  <form method="get">
+    <label for="id_estado">Filtrar por estado:</label>
+    <select name="estado" id="id_estado">
+      <option value="">(Todos)</option>
+      {% for value, label in prestamo_estados %}
+        <option value="{{ value }}" {% if value == estado %}selected{% endif %}>
+          {{ label }}
+        </option>
+      {% endfor %}
+    </select>
+
+    <label for="id_page_size">Por página:</label>
+    <input type="number" id="id_page_size" name="page_size"
+           min="1" max="100"
+           value="{{ page_size|default:20 }}">
+
+    <button type="submit">Filtrar</button>
+  </form>
+
+  {% if es_operador or es_supervisor %}
+    <p>
+      <a href="{% url 'biblioteca:prestamo_create' %}">Nuevo préstamo</a>
+    </p>
+  {% endif %}
+
+  <table border="1" cellpadding="4" cellspacing="0">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Libro</th>
+        <th>Lector</th>
+        <th>Estado</th>
+        <th>Fecha préstamo</th>
+        <th>Fecha estimada</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in page_obj.object_list %}
+        <tr>
+          <td>{{ p.id }}</td>
+          <td>{{ p.libro }}</td>
+          <td>{{ p.lector }}</td>
+          <td>{{ p.get_estado_display }}</td>
+          <td>{{ p.fecha_prestamo }}</td>
+          <td>{{ p.fecha_devolucion_estimada }}</td>
+          <td>
+            {% if es_operador or es_supervisor %}
+              {% if p.estado == "PRESTADO" or p.estado == "ATRASADO" %}
+                <form action="{% url 'biblioteca:prestamo_devolver' p.id %}" method="post" style="display:inline;">
+                  {% csrf_token %}
+                  <button type="submit">Registrar devolución</button>
+                </form>
+              {% endif %}
+              {% if p.estado == "PRESTADO" or p.estado == "ATRASADO" %}
+                <form action="{% url 'biblioteca:prestamo_marcar_robado' p.id %}" method="post" style="display:inline;">
+                  {% csrf_token %}
+                  <button type="submit">Marcar robado</button>
+                </form>
+              {% endif %}
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+
+  </table>
+
+  <div>
+    {% if page_obj.has_previous %}
+      <a href="?estado={{ estado }}&page_size={{ page_size }}&page=1">Primera</a>
+      <a href="?estado={{ estado }}&page_size={{ page_size }}&page={{ page_obj.previous_page_number }}">Anterior</a>
+    {% endif %}
+
+    <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+
+    {% if page_obj.has_next %}
+      <a href="?estado={{ estado }}&page_size={{ page_size }}&page={{ page_obj.next_page_number }}">Siguiente</a>
+      <a href="?estado={{ estado }}&page_size={{ page_size }}&page={{ page_obj.paginator.num_pages }}">Última</a>
+    {% endif %}
+  </div>
+{% endblock %}

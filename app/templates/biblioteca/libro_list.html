@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Libros - Michi Biblioteca{% endblock %}
+
+{% block content %}
+  <h1>Libros</h1>
+
+  <form method="get">
+    <label for="id_q">Buscar (título, autor o ISBN):</label>
+    <input type="text" name="q" id="id_q" value="{{ q|default:'' }}">
+
+    <label for="id_page_size">Por página:</label>
+    <input type="number" id="id_page_size" name="page_size"
+           min="1" max="100"
+           value="{{ page_size|default:20 }}">
+
+    <button type="submit">Buscar</button>
+  </form>
+
+  <p>Total encontrados: {{ page_obj.paginator.count }}</p>
+
+  {% if es_supervisor %}
+    <p><a href="{% url 'biblioteca:libro_create' %}">Nuevo libro</a></p>
+  {% endif %}
+
+  <table border="1" cellpadding="4" cellspacing="0">
+    <thead>
+      <tr>
+        <th>Título</th>
+        <th>Autor</th>
+        <th>ISBN</th>
+        <th>Categoría</th>
+        <th>Ejemplares totales</th>
+        <th>Ejemplares disponibles</th>
+        {% if es_supervisor %}
+          <th>Acciones</th>
+        {% endif %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for libro in page_obj.object_list %}
+        <tr>
+          <td>{{ libro.titulo }}</td>
+          <td>{{ libro.autor }}</td>
+          <td>{{ libro.isbn|default:"-" }}</td>
+          <td>{{ libro.categoria.nombre }}</td>
+          <td>{{ libro.ejemplares_totales }}</td>
+          <td>{{ libro.ejemplares_disponibles }}</td>
+          {% if es_supervisor %}
+            <td>
+              <a href="{% url 'biblioteca:libro_edit' libro.id %}">Editar</a> |
+              <a href="{% url 'biblioteca:libro_delete' libro.id %}">Eliminar</a>
+            </td>
+          {% endif %}
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="{% if es_supervisor %}7{% else %}6{% endif %}">
+            No se encontraron libros.
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div>
+    {% if page_obj.has_previous %}
+      <a href="?q={{ q }}&page_size={{ page_size }}&page=1">Primera</a>
+      <a href="?q={{ q }}&page_size={{ page_size }}&page={{ page_obj.previous_page_number }}">Anterior</a>
+    {% endif %}
+
+    <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+
+    {% if page_obj.has_next %}
+      <a href="?q={{ q }}&page_size={{ page_size }}&page={{ page_obj.next_page_number }}">Siguiente</a>
+      <a href="?q={{ q }}&page_size={{ page_size }}&page={{ page_obj.paginator.num_pages }}">Última</a>
+    {% endif %}
+  </div>
+{% endblock %}

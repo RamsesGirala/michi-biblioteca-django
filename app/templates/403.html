@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Permiso denegado - Michi Biblioteca{% endblock %}
+
+{% block content %}
+  <h1>Permiso denegado (403)</h1>
+  <p>No tenés permisos para acceder a esta sección.</p>
+
+  <p>
+    Si sos operador, podés:
+    <ul>
+      <li>Gestionar <a href="{% url 'biblioteca:prestamo_list' %}">Préstamos</a></li>
+      <li>Ver el listado de <a href="{% url 'biblioteca:libro_list' %}">Libros</a></li>
+    </ul>
+  </p>
+
+  <p>
+    <a href="{% url 'biblioteca:home' %}">Volver al inicio</a>
+  </p>
+{% endblock %}

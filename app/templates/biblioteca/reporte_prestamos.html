@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Reporte de préstamos - Michi Biblioteca{% endblock %}
+
+{% block content %}
+  <h1>Reporte de préstamos</h1>
+
+  <form method="get">
+    <div>
+      <label for="id_fecha_desde">Fecha desde:</label>
+      <input type="date" id="id_fecha_desde" name="fecha_desde"
+             value="{{ fecha_desde }}">
+    </div>
+    <div>
+      <label for="id_fecha_hasta">Fecha hasta:</label>
+      <input type="date" id="id_fecha_hasta" name="fecha_hasta"
+             value="{{ fecha_hasta }}">
+    </div>
+    <div>
+      <label for="id_estado">Estado:</label>
+      <select name="estado" id="id_estado">
+        <option value="">(Todos)</option>
+        {% for value, label in prestamo_estados %}
+          <option value="{{ value }}" {% if value == estado %}selected{% endif %}>
+            {{ label }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <label for="id_categoria">Categoría:</label>
+      <select name="categoria" id="id_categoria">
+        <option value="">(Todas)</option>
+        {% for c in categorias %}
+          <option value="{{ c.id }}" {% if c.id|stringformat:"s" == categoria_id %}selected{% endif %}>
+            {{ c.nombre }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <button type="submit">Aplicar filtros</button>
+
+    <button type="submit" name="export" value="csv">
+      Exportar CSV
+    </button>
+  </form>
+
+  <hr>
+
+  <h2>Resumen</h2>
+  <p>Total de préstamos en el periodo: {{ total_prestamos }}</p>
+  <p>Total atrasados: {{ total_atrasados }}</p>
+
+  <h3>Por estado</h3>
+  <ul>
+    {% for row in resumen_por_estado %}
+      <li>{{ row.estado }}: {{ row.total }}</li>
+    {% empty %}
+      <li>Sin datos para los filtros seleccionados.</li>
+    {% endfor %}
+  </ul>
+
+  <hr>
+
+  <h2>Detalle (máx. 100 registros)</h2>
+  <table border="1" cellpadding="4" cellspacing="0">
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Libro</th>
+      <th>Lector</th>
+      <th>Categoría</th>
+      <th>Estado</th>
+      <th>Fecha préstamo</th>
+      <th>Fecha estimada devolución</th>
+      <th>Fecha devolución real</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for p in prestamos %}
+      <tr>
+        <td>{{ p.id }}</td>
+        <td>{{ p.libro }}</td>
+        <td>{{ p.lector }}</td>
+        <td>{{ p.libro.categoria.nombre }}</td>
+        <td>{{ p.get_estado_display }}</td>
+        <td>{{ p.fecha_prestamo }}</td>
+        <td>{{ p.fecha_devolucion_estimada }}</td>
+        <td>{{ p.fecha_devolucion_real|default:"-" }}</td>
+      </tr>
+    {% empty %}
+      <tr>
+        <td colspan="8">No hay préstamos para los filtros seleccionados.</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

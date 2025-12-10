@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Eliminar categoría - Michi Biblioteca{% endblock %}
+
+{% block content %}
+  <h1>Eliminar categoría</h1>
+
+  <p>
+    ¿Estás seguro de que querés eliminar la categoría
+    <strong>{{ categoria.nombre }}</strong>?
+  </p>
+
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit">Sí, eliminar</button>
+    <a href="{% url 'biblioteca:categoria_list' %}">Cancelar</a>
+  </form>
+{% endblock %}

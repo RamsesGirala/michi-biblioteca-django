@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Nuevo préstamo - Michi Biblioteca{% endblock %}
+
+{% block content %}
+  <h1>Nuevo préstamo</h1>
+
+  <form method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <fieldset>
+      <legend>Datos del préstamo</legend>
+      <table>
+        <tr>
+          <th>{{ form.libro.label_tag }}</th>
+          <td>
+            {{ form.libro }}
+            {{ form.libro.errors }}
+          </td>
+        </tr>
+        <tr>
+          <th>{{ form.fecha_prestamo.label_tag }}</th>
+          <td>
+            {{ form.fecha_prestamo }}
+            {{ form.fecha_prestamo.errors }}
+          </td>
+        </tr>
+        <tr>
+          <th>{{ form.fecha_devolucion_estimada.label_tag }}</th>
+          <td>
+            {{ form.fecha_devolucion_estimada }}
+            {{ form.fecha_devolucion_estimada.errors }}
+          </td>
+        </tr>
+        <tr>
+          <th>{{ form.comentarios.label_tag }}</th>
+          <td>
+            {{ form.comentarios }}
+            {{ form.comentarios.errors }}
+          </td>
+        </tr>
+      </table>
+    </fieldset>
+
+    <fieldset>
+      <legend>Lector</legend>
+
+      <p><strong>Lector existente</strong></p>
+      <p>
+        {{ form.lector.label_tag }}<br>
+        {{ form.lector }}
+        {{ form.lector.errors }}
+      </p>
+
+      <p><strong>O crear nuevo lector</strong></p>
+      <p>
+        {{ form.crear_nuevo_lector }} {{ form.crear_nuevo_lector.label_tag }}
+        {{ form.crear_nuevo_lector.errors }}
+      </p>
+
+      <table>
+        <tr>
+          <th>{{ form.nombre_lector.label_tag }}</th>
+          <td>
+            {{ form.nombre_lector }}
+            {{ form.nombre_lector.errors }}
+          </td>
+        </tr>
+        <tr>
+          <th>{{ form.apellido_lector.label_tag }}</th>
+          <td>
+            {{ form.apellido_lector }}
+            {{ form.apellido_lector.errors }}
+          </td>
+        </tr>
+        <tr>
+          <th>{{ form.dni_lector.label_tag }}</th>
+          <td>
+            {{ form.dni_lector }}
+            {{ form.dni_lector.errors }}
+          </td>
+        </tr>
+      </table>
+    </fieldset>
+
+    <button type="submit">Guardar</button>
+  </form>
+{% endblock %}

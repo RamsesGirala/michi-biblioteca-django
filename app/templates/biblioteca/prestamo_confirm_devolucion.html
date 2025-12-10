@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Registrar devolución - Michi Biblioteca{% endblock %}
+
+{% block content %}
+  <h1>Registrar devolución</h1>
+
+  <p><strong>Préstamo #{{ prestamo.id }}</strong></p>
+  <ul>
+    <li>Libro: {{ prestamo.libro }}</li>
+    <li>Lector: {{ prestamo.lector }}</li>
+    <li>Estado actual: {{ prestamo.get_estado_display }}</li>
+    <li>Fecha préstamo: {{ prestamo.fecha_prestamo }}</li>
+    <li>Fecha estimada devolución: {{ prestamo.fecha_devolucion_estimada }}</li>
+  </ul>
+
+  <p>¿Confirmás registrar la devolución con fecha de hoy?</p>
+
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit">Sí, registrar devolución</button>
+    <a href="{% url 'biblioteca:prestamo_list' %}">Cancelar</a>
+  </form>
+{% endblock %}

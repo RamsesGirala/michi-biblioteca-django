@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio - Michi Biblioteca{% endblock %}
+
+{% block content %}
+  <h1>Inicio</h1>
+
+  {% if es_supervisor %}
+    <h2>Resumen general de préstamos</h2>
+    <p>Período completo de datos en el sistema.</p>
+
+    <h3>Por estado</h3>
+    <ul>
+      {% if resumen_por_estado %}
+        {% for row in resumen_por_estado %}
+          <li>{{ row.estado }}: {{ row.total }}</li>
+        {% endfor %}
+      {% else %}
+        <li>Sin préstamos registrados aún.</li>
+      {% endif %}
+    </ul>
+
+    <h3>Préstamos atrasados (máx. 20)</h3>
+    <table border="1" cellpadding="4" cellspacing="0">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Libro</th>
+        <th>Lector</th>
+        <th>Fecha préstamo</th>
+        <th>Fecha estimada devolución</th>
+      </tr>
+      </thead>
+      <tbody>
+      {% if prestamos_atrasados %}
+        {% for p in prestamos_atrasados %}
+          <tr>
+            <td>{{ p.id }}</td>
+            <td>{{ p.libro }}</td>
+            <td>{{ p.lector }}</td>
+            <td>{{ p.fecha_prestamo }}</td>
+            <td>{{ p.fecha_devolucion_estimada }}</td>
+          </tr>
+        {% endfor %}
+      {% else %}
+        <tr>
+          <td colspan="5">No hay préstamos atrasados.</td>
+        </tr>
+      {% endif %}
+      </tbody>
+    </table>
+
+    <p>
+      <a href="{% url 'biblioteca:prestamo_list' %}">Ir a gestión de préstamos</a> |
+      <a href="{% url 'biblioteca:reporte_prestamos' %}">Ir a reportes</a>
+    </p>
+
+  {% elif es_operador %}
+    <h2>Préstamos activos recientes</h2>
+    <p>Desde {{ hace_7_dias }} hasta {{ hoy }}.</p>
+
+    <p>
+      <a href="{% url 'biblioteca:prestamo_create' %}">Nuevo préstamo</a> |
+      <a href="{% url 'biblioteca:prestamo_list' %}">Ver todos los préstamos</a>
+    </p>
+
+    <table border="1" cellpadding="4" cellspacing="0">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Libro</th>
+        <th>Lector</th>
+        <th>Estado</th>
+        <th>Fecha préstamo</th>
+        <th>Fecha estimada devolución</th>
+      </tr>
+      </thead>
+      <tbody>
+      {% if prestamos_activos_recientes %}
+        {% for p in prestamos_activos_recientes %}
+          <tr>
+            <td>{{ p.id }}</td>
+            <td>{{ p.libro }}</td>
+            <td>{{ p.lector }}</td>
+            <td>{{ p.get_estado_display }}</td>
+            <td>{{ p.fecha_prestamo }}</td>
+            <td>{{ p.fecha_devolucion_estimada }}</td>
+          </tr>
+        {% endfor %}
+      {% else %}
+        <tr>
+          <td colspan="6">No hay préstamos activos recientes.</td>
+        </tr>
+      {% endif %}
+      </tbody>
+    </table>
+
+  {% else %}
+    <p>No tenés rol asignado todavía. Consultá con el michi-admin.</p>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Eliminar libro - Michi Biblioteca{% endblock %}
+
+{% block content %}
+  <h1>Eliminar libro</h1>
+
+  <p>
+    ¿Estás seguro de que querés eliminar el libro
+    <strong>{{ libro.titulo }}</strong> de {{ libro.autor }}?
+  </p>
+
+  <p>
+    Si el libro tiene préstamos registrados no se podrá eliminar.
+  </p>
+
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit">Sí, eliminar</button>
+    <a href="{% url 'biblioteca:libro_list' %}">Cancelar</a>
+  </form>
+{% endblock %}
